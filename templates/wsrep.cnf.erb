@@ -38,20 +38,13 @@ bind-address=0.0.0.0
 ##
 
 # Full path to wsrep provider library or 'none'
-wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_provider=<%=galeralib-%>
 
 # Provider specific configuration options
 #wsrep_provider_options=
 
 # Logical cluster name. Should be the same for all nodes.
 wsrep_cluster_name="<%=cluster_name-%>"
-
-# Group communication system handle
-<% if master_ip -%>
-wsrep_cluster_address="gcomm://<%= master_ip %>"
-<% else -%>
-wsrep_cluster_address="gcomm://"
-<% end -%>
 
 # Human-readable node name (non-unique). Hostname by default.
 #wsrep_node_name=
@@ -65,7 +58,7 @@ wsrep_cluster_address="gcomm://"
 #wsrep_node_incoming_address=
 
 # How many threads will process writesets from other nodes
-wsrep_slave_threads=1
+wsrep_slave_threads=4
 
 # DBUG options for wsrep provider
 #wsrep_dbug_option
@@ -112,7 +105,7 @@ wsrep_notify_cmd=
 ##
 
 # State Snapshot Transfer method
-wsrep_sst_method=rsync
+wsrep_sst_method=xtrabackup
 
 # Address on THIS node to receive SST at. DON'T SET IT TO DONOR ADDRESS!!!
 # (SST method dependent. Defaults to the first IP of the first interface)
@@ -127,3 +120,5 @@ wsrep_sst_auth=wsrep_sst:password
 
 # Protocol version to use
 # wsrep_protocol_version=
+
+[MYSQLD_SAFE]

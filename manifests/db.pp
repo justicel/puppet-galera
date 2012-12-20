@@ -1,10 +1,10 @@
-# Define: mysql::db
+# Define: galera::db
 #
 # This module creates database instances, a user, and grants that user
 # privileges to the database.  It can also import SQL from a file in order to,
 # for example, initialize a database schema.
 #
-# Since it requires class mysql::server, we assume to run all commands as the
+# Since it requires class galera::server, we assume to run all commands as the
 # root mysql user against the local mysql server.
 #
 # Parameters:
@@ -21,11 +21,11 @@
 #
 # Requires:
 #
-#   class mysql::server
+#   class galera::server
 #
 # Sample Usage:
 #
-#  mysql::db { 'mydb':
+#  galera::db { 'mydb':
 #    user     => 'my_user',
 #    password => 'password',
 #    host     => $::hostname,

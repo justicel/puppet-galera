@@ -1,146 +1,79 @@
+#Galera puppet module originally by Jimdo.
+#Re-based by Justice London <jlondon@syrussystems.com>
+#Source at: https://github.com/justicel/puppet-galera
+#Contact Justice for support (or fork this, on github!)
+#Uses Percona XtraDB distribution of Galera which provides a stable Galera base but also xtradb engine
 
-class galera(
-    $cluster_name	  = 'galera', 
-    $master_ip 		  = false,
-    $mysql_user           = 'wsrep_sst',
-    $mysql_password       = 'password',
-    $root_password        = 'password',
-    $old_root_password    = '',
-    $etc_root_password    = false,
-    $enabled              = true,
-) {
-   
-   if $enabled {
-    $service_ensure = 'running'
-   } else {
-    $service_ensure = 'stopped'
-   }
-
-   service { 'mysql-galera' :
-        name        => "mysql",
-        ensure      => $service_ensure,
-        enable      => $enabled,
-        require     => [Package["mysql-server-wsrep","galera","mysql-client-5.5","libaio1","libssl0.9.8"],File["/etc/mysql/conf.d/wsrep.cnf","/etc/mysql/my.cnf"]],
-        hasrestart  => true,
-	hasstatus   => true,
-    }
-
-    package { "mysql-client-5.5" :
-        ensure      => present,
-    }
-
-    package { "libaio1" :
-        ensure      => present,
-    }
-
-    package { "libssl0.9.8" :
-        ensure      => present,
-    }
-
-    package { "mysql-server-wsrep" :
-        ensure      => present,
-        provider    => "dpkg",
-        source      => "/tmp/mysql-server-wsrep-5.5.23-23.6-amd64.deb",
-        require     => [Exec["download-wsrep"],Package["mysql-client-5.5","libaio1","libssl0.9.8"]],
-    }
-
-    package { "galera" :
-        ensure      => present,
-        provider    => "dpkg",
-        source      => "/tmp/galera-23.2.1-amd64.deb",
-        require     => [Exec["download-galera"],Package["mysql-client-5.5","libaio1","libssl0.9.8"]],
-    }
-
-    exec { "download-wsrep" :
-        command     => "wget -O /tmp/mysql-server-wsrep-5.5.23-23.6-amd64.deb http://launchpad.net/codership-mysql/5.5/5.5.23-23.6/+download/mysql-server-wsrep-5.5.23-23.6-amd64.deb",
-        path        => '/usr/bin:/usr/sbin:/bin:/sbin',
-	creates     => "/tmp/mysql-server-wsrep-5.5.23-23.6-amd64.deb",
-    }
-
-    exec { "download-galera" :
-        command     => "wget -O /tmp/galera-23.2.1-amd64.deb http://launchpad.net/galera/2.x/23.2.1/+download/galera-23.2.1-amd64.deb",
-        path        => '/usr/bin:/usr/sbin:/bin:/sbin',
-	creates     => "/tmp/galera-23.2.1-amd64.deb",
-    }
-
-    file { "/etc/mysql/conf.d/wsrep.cnf" :
-        ensure      => present,
-        content     => template("galera/wsrep.cnf.erb"),
-        require     => Package["mysql-server-wsrep","galera"],
-    }
-
-    file { "/etc/mysql/my.cnf" :
-        ensure      => present,
-        content     => template("galera/my.cnf.erb"),
-        require     => Package["mysql-server-wsrep","galera"],
-    }
-
-  # This kind of sucks, that I have to specify a difference resource for
-  # restart.  the reason is that I need the service to be started before mods
-  # to the config file which can cause a refresh
-  exec { 'mysqld-restart':
-    command     => "service mysql restart",
-    logoutput   => on_failure,
-    refreshonly => true,
-    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
+#Params are mostly included as a starting point for a build.
+#Root password and similar should be changed from defaults although they are more complex
+#than other 'default' passwords at least.
+class galera (
+  $cluster_name   = $galera::params::cluster_name,
+  $mysql_user     = $galera::params::mysql_user,
+  $mysql_password = $galera::params::mysql_password,
+  $root_password  = $galera::params::root_password,
+  $enabled        = $galera::params::enabled,
+  $galeraconfig   = $galera::params::galeraconfig,
+  $configfile     = $galera::params::configfile,
+)
+inherits galera::params
+{
+  
+  #Check if the main server package (and dependent packages) are installed
+  package { $galerapackage:
+    ensure => present,
+    require => File[$configfile, $galeraconfig],
   }
 
-  # manage root password if it is set
-  if $root_password != 'UNSET' {
-    case $old_root_password {
-      '':      { $old_pw='' }
-      default: { $old_pw="-p${old_root_password}" }
-    }
-
-    exec { 'set_mysql_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password ${root_password}",
-      logoutput => true,
-      unless    => "mysqladmin -u root -p${root_password} status > /dev/null",
-      path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      notify    => Exec['mysqld-restart'],
-      require   => [File['/etc/mysql/conf.d'],Service['mysql']],
-    }
-
-    file { '/root/.my.cnf':
-      content => template('mysql/my.cnf.pass.erb'),
-      require => Exec['set_mysql_rootpw'],
-    }
-
-    if $etc_root_password {
-      file{ '/etc/my.cnf':
-        content => template('mysql/my.cnf.pass.erb'),
-        require => Exec['set_mysql_rootpw'],
-      }
-    }
- 
-    exec { "set-mysql-password-noroot" :
-        unless      => "/usr/bin/mysql -u${mysql_user} -p${mysql_password}",
-        command     => "/usr/bin/mysql -uroot -p -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
-        require     => Service["mysql"],
-        subscribe   => Service["mysql"],
-        refreshonly => true,
-    }
+  #Define a basic mysql-galera service
+  service { 'mysql-galera':
+    name       => 'mysql',
+    ensure     => $enabled,
+    require    => File[$configfile, $galeraconfig],
+    hasrestart => true,
+    hasstatus  => true,
   }
 
-    exec { "set-mysql-password" :
-        unless      => "/usr/bin/mysql -u${mysql_user} -p${mysql_password}",
-        command     => "/usr/bin/mysql -uroot -p${root_password} -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
-        require     => Service["mysql"],
-        subscribe   => Service["mysql"],
-        refreshonly => true,
-    }
-
-  file { '/etc/mysql':
-    ensure => directory,
-    mode   => '0755',
-  }
-  file { '/etc/mysql/conf.d':
-    ensure => directory,
-    mode   => '0755',
-  }
-  file { '/etc/my.cnf':
+  #Default mysql config file
+  file { $configfile :
+    ensure  => present,
     content => template('galera/my.cnf.erb'),
-    mode    => '0644',
+#    require => Package[$galerapackage],
   }
 
-}
+  #Build  galera config using puppet-concat
+  concat { "$galeraconfig":
+    owner       => '0',
+    group       => '0',
+    mode        => '0644',
+#    require     => Package[$galerapackage],
+#    notify      => Service['mysql'], #Hmm... might need to remove this.
+  }
+  concat::fragment { 'galerabody':
+    target      => $galeraconfig,
+    order       => '01',
+    content     => "#This file managed by Puppet\n",
+  }
+  #The main csync2 config body as defined by template and concat.
+  concat::fragment { "${cluster_name}_galera_body":
+    order       => '02',
+    target      => $galeraconfig,
+    content     => template('galera/wsrep.cnf.erb'),
+  }
+  #Add wsrep_urls text to config
+  concat::fragment { "${cluster_name}_wsrep_url":
+    order	=> '10',
+    target	=> $galeraconfig,
+    content	=> "wsrep_urls=",
+  }
+  #Realize cluster members as wsrep_url entries
+  Galera::Galeranode <<| cluster_name == $cluster_name |>>
+  #Cap the wsrep_url entry with a blank node
+  #This allows us to start a new cluster if none of the members can be located
+  concat::fragment { "${cluster_name}_wsrep_final":
+    order	=> '12',
+    target	=> $galeraconfig,
+    content	=> "gcomm://\n",
+  }
+ 
+}  
