@@ -17,8 +17,6 @@ Change the mysql root password in production and limit access to galera cluster 
 
  * put a load balancer in front of the cluster
 
-Very basic node definition:
-
 #Nodes
 $cluster_name = 'my_galera_dev'
 
