@@ -1,6 +1,6 @@
 This is a good start to play around with the galera multi-master mysql synchronous replication (http://www.codership.com/products/mysql_galera)
 
-HOWTO:
+#HOWTO:
 
  * install vagrant: http://vagrantup.com/
  * get debian squeeze basebox (http://vagrantbox.es) or build your own (https://github.com/jedi4ever/veewee)
@@ -9,17 +9,17 @@ HOWTO:
  * play around (add a database and data, chaos-monkey nodes etc.)
 
 
-WARNING
+#WARNING
 
 Change the mysql root password in production and limit access to galera cluster members!
 
-TODO
+#TODO
 
  * put a load balancer in front of the cluster
 
 Very basic node definition:
 
-# nodes
+#Nodes
 $cluster_name = 'my_galera_dev'
 
 node /^galera/ {
