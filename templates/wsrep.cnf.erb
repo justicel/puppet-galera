@@ -113,7 +113,7 @@ wsrep_sst_method=xtrabackup
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>
-wsrep_sst_auth=wsrep_sst:password
+wsrep_sst_auth=<%=mysql_user-%>:<%=mysql_password-%>
 
 # Desired SST donor name.
 #wsrep_sst_donor=

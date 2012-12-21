@@ -1,8 +1,8 @@
 # Used to create required db entries for HAproxy health monitoring
 
 class galera::haproxy(
-  $mysql_user     	= 'wsrep_sst',
-  $mysql_password 	= 'password',
+  $mysql_user     	= $galera::params::mysql_user,
+  $mysql_password 	= $galera::params::mysql_password,
   $haproxy_user		= 'haproxy',
 ) 
 

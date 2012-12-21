@@ -4,7 +4,6 @@
 
 class galera::params {
   $cluster_name      = 'galera'
-#  $master_ip         = false
   $mysql_user        = 'wsrep_sst'
   $mysql_password    = 'G@l3RaL0g'
   $root_password     = 'Ch@ng3Th1s'
@@ -21,7 +20,7 @@ class galera::params {
       }
 
       $configfile = '/etc/my.cnf'
-      $galeraconfig = '/etc/conf.d/wsrep.cnf'
+      $galeraconfig = '/etc/mysql/conf.d/wsrep.cnf'
       $galerapackage = 'Percona-XtraDB-Cluster-server'
       $galeralib = '/usr/lib64/libgalera_smm.so'
     }
@@ -41,6 +40,5 @@ class galera::params {
       $galeralib = '/usr/lib/libgalera_smm.so'
     }
   }
-
 
 }

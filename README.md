@@ -15,25 +15,23 @@ Change the mysql root password in production and limit access to galera cluster 
 
 TODO
 
- * naming: master -> donor
  * put a load balancer in front of the cluster
- * make cluster "masterless"
 
-nodes.pp
+Very basic node definition:
 
 # nodes
-$cluster_name = 'geloet'
+$cluster_name = 'my_galera_dev'
 
-node /host01/ {
-    class { 'galera' :
-        cluster_name => $cluster_name
-    }
+node /^galera/ {
+
+  #This defines the node using the node FQDN as the 'name'
+  #Specify the cluster to use with cluster_name
+  @@galera::galeranode { $fqdn:
+    cluster_name => 'galera', }
+
+  #Realize the galera nodes for cluster 'galera'
+  class {'galera': 
+    cluster_name => 'galera', }  
+
 }
 
-node /host0([2-9])/ {
-    $master_ip = '33.33.33.11'
-    class { 'galera' :
-        cluster_name => $cluster_name,
-        master_ip    => $master_ip
-    }
-}

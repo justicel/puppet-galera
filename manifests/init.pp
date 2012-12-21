@@ -15,9 +15,13 @@ class galera (
   $enabled        = $galera::params::enabled,
   $galeraconfig   = $galera::params::galeraconfig,
   $configfile     = $galera::params::configfile,
+  $old_root_password = $galera::params::old_root_password,
+  $etc_root_password = $galera::params::etc_root_password,
 )
 inherits galera::params
 {
+#Include root password settings as needed
+include galera::galeraroot
   
   #Check if the main server package (and dependent packages) are installed
   package { $galerapackage:
@@ -30,15 +34,12 @@ inherits galera::params
     name       => 'mysql',
     ensure     => $enabled,
     require    => File[$configfile, $galeraconfig],
-    hasrestart => true,
-    hasstatus  => true,
   }
 
   #Default mysql config file
   file { $configfile :
     ensure  => present,
     content => template('galera/my.cnf.erb'),
-#    require => Package[$galerapackage],
   }
 
   #Build  galera config using puppet-concat
@@ -46,8 +47,7 @@ inherits galera::params
     owner       => '0',
     group       => '0',
     mode        => '0644',
-#    require     => Package[$galerapackage],
-#    notify      => Service['mysql'], #Hmm... might need to remove this.
+    notify      => Service['mysql'], #Hmm... might need to remove this. Do we want mysql to restart always?
   }
   concat::fragment { 'galerabody':
     target      => $galeraconfig,
@@ -75,5 +75,19 @@ inherits galera::params
     target	=> $galeraconfig,
     content	=> "gcomm://\n",
   }
- 
-}  
+
+  #Necessary base folders for all configs
+  file { ['/etc/mysql','/etc/mysql/conf.d']:
+    ensure => directory,
+    mode   => '0755',
+  }
+
+  #Modified debian-start to disable mysqlcheck
+  file { '/etc/mysql/debian-start':
+    ensure => present,
+    source => 'puppet:///modules/galera/debian-start',
+    mode   => '0755',
+    require => File['/etc/mysql'],
+  } 
+
+} 
