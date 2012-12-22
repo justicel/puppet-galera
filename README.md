@@ -25,10 +25,10 @@ Change the mysql root password in production and limit access to galera cluster 
     #This defines the node using the node FQDN as the 'name'
     #Specify the cluster to use with cluster_name
     @@galera::galeranode { $fqdn:
-      cluster_name => 'galera', }
+      cluster_name => "${cluster_name}", }
 
     #Realize the galera nodes for cluster 'galera'
     class {'galera': 
-      cluster_name => 'galera', }  
+      cluster_name => "${cluster_name}", }  
     }  
 
