@@ -15,8 +15,9 @@ class galera::params {
   case $osfamily {
     Redhat: {
       package { 'percona-release':
-        ensure => present,
-        source => 'http://www.percona.com/redir/downloads/percona-release/percona-release-0.0-1.x86_64.rpm',
+        ensure   => present,
+        source   => 'http://www.percona.com/redir/downloads/percona-release/percona-release-0.0-1.x86_64.rpm',
+        provider => 'rpm',
       }
 
       $configfile = '/etc/my.cnf'
