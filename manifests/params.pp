@@ -35,6 +35,14 @@ class galera::params {
         include_src => true,
       }
 
+      #Modified debian-start to disable mysqlcheck
+      file { '/etc/mysql/debian-start':
+        ensure => present,
+        source => 'puppet:///modules/galera/debian-start',
+        mode   => '0755',
+        require => File['/etc/mysql'],
+      }
+
       $configfile = '/etc/mysql/my.cnf'
       $galeraconfig = '/etc/mysql/conf.d/wsrep.cnf'
       $galerapackage = 'percona-xtradb-cluster-server-5.5'

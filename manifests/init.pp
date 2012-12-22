@@ -82,12 +82,4 @@ include galera::galeraroot
     mode   => '0755',
   }
 
-  #Modified debian-start to disable mysqlcheck
-  file { '/etc/mysql/debian-start':
-    ensure => present,
-    source => 'puppet:///modules/galera/debian-start',
-    mode   => '0755',
-    require => File['/etc/mysql'],
-  } 
-
 } 
