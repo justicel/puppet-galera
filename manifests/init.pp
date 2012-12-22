@@ -8,13 +8,13 @@
 #Root password and similar should be changed from defaults although they are more complex
 #than other 'default' passwords at least.
 class galera (
-  $cluster_name   = $galera::params::cluster_name,
-  $mysql_user     = $galera::params::mysql_user,
-  $mysql_password = $galera::params::mysql_password,
-  $root_password  = $galera::params::root_password,
-  $enabled        = $galera::params::enabled,
-  $galeraconfig   = $galera::params::galeraconfig,
-  $configfile     = $galera::params::configfile,
+  $cluster_name      = $galera::params::cluster_name,
+  $mysql_user        = $galera::params::mysql_user,
+  $mysql_password    = $galera::params::mysql_password,
+  $root_password     = $galera::params::root_password,
+  $enabled           = $galera::params::enabled,
+  $galeraconfig      = $galera::params::galeraconfig,
+  $configfile        = $galera::params::configfile,
   $old_root_password = $galera::params::old_root_password,
   $etc_root_password = $galera::params::etc_root_password,
 )
@@ -25,16 +25,32 @@ include galera::galeraroot
   
   #Check if the main server package (and dependent packages) are installed
   package { $galerapackage:
-    ensure => present,
-    require => File[$configfile, $galeraconfig],
+    ensure  => present,
+    require => File[$configfile],
   }
 
   #Define a basic mysql-galera service
   service { 'mysql-galera':
     name       => 'mysql',
     ensure     => $enabled,
-    require    => File[$configfile, $galeraconfig],
+    require    => [File[$configfile, $galeraconfig], Package[$galerapackage]],
   }
+
+  #Custom exec to only reload mysql on config changes
+  exec { 'galera-reload':
+    command     => 'service mysql reload',
+    refreshonly => true,
+    require     => [Package[$galerapackage], Service['mysql']],
+    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
+  }
+
+  exec { 'galera-restart':
+    command     => "service mysql restart",
+    logoutput   => on_failure,
+    refreshonly => true,
+    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
+  }
+
 
   #Default mysql config file
   file { $configfile :
@@ -47,7 +63,6 @@ include galera::galeraroot
     owner       => '0',
     group       => '0',
     mode        => '0644',
-    notify      => Service['mysql'], #Hmm... might need to remove this. Do we want mysql to restart always?
   }
   concat::fragment { 'galerabody':
     target      => $galeraconfig,

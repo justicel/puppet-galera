@@ -11,11 +11,11 @@
 #[mysql_password] The mysql password for the wsrep SST user.
 
 class galera::galeraroot (
-  $root_password = $galera::params::root_password,
-  $old_root_password = $galera::params::old_root_password,
-  $etc_root_password = $galera::params::etc_root_password, 
-  $mysql_user = $galera::params::mysql_user,
-  $mysql_password = $galera::params::mysql_password,
+  $etc_root_password = $galera::etc_root_password, 
+  $mysql_user        = $galera::mysql_user,
+  $mysql_password    = $galera::mysql_password,
+  $old_root_password = $galera::old_root_password,
+  $root_password     = $galera::root_password,
 )
 {
   # manage root password if it is set
@@ -30,8 +30,10 @@ class galera::galeraroot (
       logoutput => true,
       unless    => "mysqladmin -u root -p${root_password} status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      require   => [File['/etc/mysql/conf.d'],Service['mysql']],
-    }
+      require   => Service['mysql'],
+      tries     => 2,
+      try_sleep => 5,
+   }
 
     file { '/root/.my.cnf':
       content => template('galera/my.cnf.pass.erb'),
@@ -54,6 +56,8 @@ class galera::galeraroot (
       require     => Service["mysql"],
       subscribe   => Service["mysql"],
       refreshonly => true,
+      tries 	  => 2,
+      try_sleep   => 5,
     }
 
 }

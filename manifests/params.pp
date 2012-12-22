@@ -20,33 +20,33 @@ class galera::params {
         provider => 'rpm',
       }
 
-      $configfile = '/etc/my.cnf'
-      $galeraconfig = '/etc/mysql/conf.d/wsrep.cnf'
+      $configfile    = '/etc/my.cnf'
+      $galeraconfig  = '/etc/mysql/conf.d/wsrep.cnf'
       $galerapackage = 'Percona-XtraDB-Cluster-server'
-      $galeralib = '/usr/lib64/libgalera_smm.so'
+      $galeralib     = '/usr/lib64/libgalera_smm.so'
     }
     Debian: {
       #This requires puppet-apt. If you don't have it a) You need it b) It's extremely useful
       apt::source { 'percona_xtradb':
-        location => 'http://repo.percona.com/apt',
-        repos    => 'main',
-        key      => '1C4CBDCDCD2EFD2A',
-        key_server => 'keys.gnupg.net',
+        location    => 'http://repo.percona.com/apt',
+        repos       => 'main',
+        key         => '1C4CBDCDCD2EFD2A',
+        key_server  => 'keys.gnupg.net',
         include_src => true,
       }
 
       #Modified debian-start to disable mysqlcheck
       file { '/etc/mysql/debian-start':
-        ensure => present,
-        source => 'puppet:///modules/galera/debian-start',
-        mode   => '0755',
+        ensure  => present,
+        source  => 'puppet:///modules/galera/debian-start',
+        mode    => '0755',
         require => File['/etc/mysql'],
       }
 
-      $configfile = '/etc/mysql/my.cnf'
-      $galeraconfig = '/etc/mysql/conf.d/wsrep.cnf'
+      $configfile    = '/etc/mysql/my.cnf'
+      $galeraconfig  = '/etc/mysql/conf.d/wsrep.cnf'
       $galerapackage = 'percona-xtradb-cluster-server-5.5'
-      $galeralib = '/usr/lib/libgalera_smm.so'
+      $galeralib     = '/usr/lib/libgalera_smm.so'
     }
   }
 
