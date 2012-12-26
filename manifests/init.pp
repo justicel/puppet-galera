@@ -22,7 +22,10 @@ inherits galera::params
 {
 #Include root password settings as needed
 include galera::galeraroot
-  
+ 
+#Need concat to make this work
+include concat::setup
+ 
   #Check if the main server package (and dependent packages) are installed
   package { $galerapackage:
     ensure  => present,
