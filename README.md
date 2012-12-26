@@ -13,6 +13,10 @@ This is a good start to play around with the galera multi-master mysql synchrono
 
 Change the mysql root password in production and limit access to galera cluster members!
 
+Additionally, if you are using this module having never implemented Galera before you need to:
+- Disable SELinux (Sorry. Eventually I might add support for this, but right now Galera does not like it.
+- Open firewall ports: 3306, 4567, 4568, 4444
+
 #TODO
 
  * put a load balancer in front of the cluster
