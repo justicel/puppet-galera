@@ -6,7 +6,7 @@ service mysqlchk
 {
         flags           = REUSE
         socket_type     = stream
-        port            = 9200
+        port            = 9220
         wait            = no
         user            = nobody
         server          = <%= mysqlchk_script_dir %>/galera_chk
