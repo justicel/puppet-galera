@@ -5,10 +5,10 @@
 # for example, initialize a database schema.
 #
 # Since it requires class galera::server, we assume to run all commands as the
-# root mysql user against the local mysql server.
+# root galera user against the local galera server.
 #
 # Parameters:
-#   [*title*]       - mysql database name.
+#   [*title*]       - galera database name.
 #   [*user*]        - username to create and grant access.
 #   [*password*]    - user's password.
 #   [*charset*]     - database charset.

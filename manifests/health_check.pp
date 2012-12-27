@@ -28,7 +28,7 @@ class galera::health_check(
   $mysqlchk_user        = 'mysqlchk_user',
   $mysqlchk_password    = 'mysqlchk_password',
   $enabled              = true,
-) {
+) inherits galera::params {
 
   # Needed to manage /etc/services
   include augeas
@@ -48,7 +48,7 @@ class galera::health_check(
 
   package { 'xinetd':
     ensure  => present,
-    require => Package["mysql-server-wsrep","galera","mysql-client-5.5"],
+    require => Package[$galerapackage],
   }
 
   file { $mysqlchk_script_dir:
