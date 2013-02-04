@@ -42,7 +42,7 @@ bind-address=0.0.0.0
 wsrep_provider=<%=galeralib-%>
 
 # Provider specific configuration options
-#wsrep_provider_options=
+wsrep_provider_options="evs.keepalive_period=PT3S; evs.inactive_check_period=PT10S; evs.suspect_timeout=PT30S; evs.inactive_timeout=PT1M; evs.consensus_timeout=PT1M; evs.send_window=1024; evs.user_send_window=512; gcache.size=2G;"
 
 # Logical cluster name. Should be the same for all nodes.
 wsrep_cluster_name="<%=cluster_name-%>"
@@ -92,6 +92,10 @@ wsrep_drupal_282555_workaround=0
 # enable "strictly synchronous" semantics for read operations
 wsrep_causal_reads=0
 
+#Type of Schema Upgrade to use
+#TOI,RSU
+wsrep_OSU_method=TOI
+
 # Command to call when node status or cluster membership changes.
 # Will be passed all or some of the following options:
 # --status  - new status of this node
@@ -99,7 +103,7 @@ wsrep_causal_reads=0
 # --primary - whether the component is primary or not ("yes"/"no")
 # --members - comma-separated list of members
 # --index   - index of this node in the list
-wsrep_notify_cmd=
+# wsrep_notify_cmd=
 
 ##
 ## WSREP State Transfer options

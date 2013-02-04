@@ -30,9 +30,6 @@ class galera::health_check(
   $enabled              = true,
 ) inherits galera::params {
 
-  # Needed to manage /etc/services
-#  include augeas
-
   if $enabled {
     $service_ensure = 'running'
    } else {
