@@ -39,7 +39,7 @@ include concat::setup
   service { 'mysql-galera':
     name       => 'mysql',
     ensure     => $enabled,
-    require    => [File[$configfile, $galeraconfig], Package[$galerapackage]],
+    require    => [File[$configfile, $galeraconfig, '/var/run/mysqld'], Package[$galerapackage]],
   }
 
   #Custom exec to only reload mysql on config changes
@@ -98,7 +98,7 @@ include concat::setup
   }
 
   #Necessary base folders for all configs
-  file { ['/etc/mysql','/etc/mysql/conf.d']:
+  file { ['/etc/mysql','/etc/mysql/conf.d', '/var/run/mysqld']:
     ensure => directory,
     mode   => '0755',
   }
