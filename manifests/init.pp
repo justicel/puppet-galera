@@ -27,9 +27,12 @@ include galera::galeraroot
 include concat::setup
  
   #Check if the main server package (and dependent packages) are installed
+  package { $compatpackage:
+    ensure => present,
+  }
   package { $galerapackage:
     ensure  => present,
-    require => File[$configfile],
+    require => [ File[$configfile], Package[$compatpackage] ],
   }
 
   #Define a basic mysql-galera service

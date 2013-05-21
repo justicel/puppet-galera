@@ -19,10 +19,15 @@ class galera::params {
         source   => 'http://www.percona.com/redir/downloads/percona-release/percona-release-0.0-1.x86_64.rpm',
         provider => 'rpm',
       }
+      file { '/etc/yum.repos.d/Percona.repo':
+        ensure  => present,
+        require => Package['percona-release'],
+      }
 
       $configfile    = '/etc/my.cnf'
       $galeraconfig  = '/etc/mysql/conf.d/wsrep.cnf'
       $galerapackage = 'Percona-XtraDB-Cluster-server'
+      $compatpackage = 'Percona-Server-share-compat'
       $galeralib     = '/usr/lib64/libgalera_smm.so'
     }
     Debian: {
