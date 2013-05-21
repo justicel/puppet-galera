@@ -101,6 +101,8 @@ include concat::setup
   file { ['/etc/mysql','/etc/mysql/conf.d', '/var/run/mysqld']:
     ensure => directory,
     mode   => '0755',
+    group  => 'mysql',
+    owner  => 'mysql',
   }
 
 } 
