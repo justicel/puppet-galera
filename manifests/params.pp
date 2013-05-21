@@ -27,7 +27,7 @@ class galera::params {
       $configfile    = '/etc/my.cnf'
       $galeraconfig  = '/etc/mysql/conf.d/wsrep.cnf'
       $galerapackage = 'Percona-XtraDB-Cluster-server'
-      $compatpackage = 'Percona-Server-share-compat'
+      $compatpackage = 'Percona-Server-shared-compat'
       $galeralib     = '/usr/lib64/libgalera_smm.so'
     }
     Debian: {
