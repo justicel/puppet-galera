@@ -103,6 +103,7 @@ include concat::setup
     mode   => '0755',
     group  => 'mysql',
     owner  => 'mysql',
+    require => Package[$galerapackage],
   }
 
 } 
