@@ -33,8 +33,16 @@ include concat::setup
   package { $galerapackage:
     ensure  => present,
     require => [ File[$configfile], Package[$compatpackage] ],
+    notify  => Exec['mysql_install_db'],
   }
 
+  #Just to be safe, we run install command for mysql on package install
+  exec { 'mysql_install_db':
+    path    => ['/usr/bin', '/usr/sbin', '/sbin', 'bin'],
+    creates => '/var/lib/mysql/mysql/user.frm',
+    refreshonly => true,
+  }
+ 
   #Define a basic mysql-galera service
   service { 'mysql-galera':
     name       => 'mysql',
