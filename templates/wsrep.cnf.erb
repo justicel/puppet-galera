@@ -39,13 +39,13 @@ bind-address=0.0.0.0
 ##
 
 # Full path to wsrep provider library or 'none'
-wsrep_provider=<%=galeralib-%>
+wsrep_provider=<%=@galeralib-%>
 
 # Provider specific configuration options
 wsrep_provider_options="evs.keepalive_period=PT3S; evs.inactive_check_period=PT10S; evs.suspect_timeout=PT30S; evs.inactive_timeout=PT1M; evs.consensus_timeout=PT1M; evs.send_window=1024; evs.user_send_window=512; gcache.size=2G;"
 
 # Logical cluster name. Should be the same for all nodes.
-wsrep_cluster_name="<%=cluster_name-%>"
+wsrep_cluster_name="<%=@cluster_name-%>"
 
 # Human-readable node name (non-unique). Hostname by default.
 #wsrep_node_name=
@@ -118,7 +118,7 @@ wsrep_sst_method=xtrabackup
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>
-wsrep_sst_auth=<%=mysql_user-%>:<%=mysql_password-%>
+wsrep_sst_auth=<%=@mysql_user-%>:<%=@mysql_password-%>
 
 # Desired SST donor name.
 #wsrep_sst_donor=
