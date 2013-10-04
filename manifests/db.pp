@@ -53,7 +53,7 @@ define galera::db (
     ensure        => present,
     password_hash => mysql_password($password),
     provider      => 'mysql',
-    require       => Database[$name],
+    require       => Mysql_database[$name],
   }
 
   mysql_grant { "${user}@${host}/${name}":
@@ -69,8 +69,8 @@ define galera::db (
       command     => "/usr/bin/mysql ${name} < ${sql}",
       logoutput   => true,
       refreshonly => $refresh,
-      require     => Database_grant["${user}@${host}/${name}"],
-      subscribe   => Database[$name],
+      require     => Mysql_grant["${user}@${host}/${name}"],
+      subscribe   => Mysql_database[$name],
     }
   }
 
