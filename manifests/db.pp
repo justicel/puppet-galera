@@ -61,6 +61,7 @@ define galera::db (
     provider   => 'mysql',
     require    => Database_user["${user}@${host}"],
     table      => '*.*',
+    user       => "${user}@${host}",
   }
 
   $refresh = ! $enforce_sql
