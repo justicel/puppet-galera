@@ -19,6 +19,11 @@ class galera::params {
         source   => 'http://www.percona.com/redir/downloads/percona-release/percona-release-0.0-1.x86_64.rpm',
         provider => 'rpm',
       }
+      #Include netcat package
+      package { 'nc':
+        ensure => present,
+      }
+
       file { '/etc/yum.repos.d/Percona.repo':
         ensure  => present,
         require => Package['percona-release'],
