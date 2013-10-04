@@ -22,11 +22,11 @@ class galera::galeraroot (
   if $root_password != 'UNSET' {
     case $old_root_password {
       '':      { $old_pw='' }
-      default: { $old_pw="-p${old_root_password}" }
+      default: { $old_pw="-p'${old_root_password}'" }
     }
 
     exec { 'set_mysql_rootpw':
-      command   => "mysqladmin -u root ${old_pw} password ${root_password}",
+      command   => "mysqladmin -u root '${old_pw}' password '${root_password}'",
       logoutput => true,
       unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
@@ -51,8 +51,8 @@ class galera::galeraroot (
 
     #On first run and on wsrep config modification, run an update to the wsrep user/password
     exec { 'set-mysql-password' :
-      unless      => "/usr/bin/mysql -u${mysql_user} -p${mysql_password}",
-      command     => "/usr/bin/mysql -uroot -p${root_password} -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
+      unless      => "/usr/bin/mysql -u${mysql_user} -p'${mysql_password}'",
+      command     => "/usr/bin/mysql -uroot -p'${root_password}' -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
       require     => Service["mysql"],
       subscribe   => Service["mysql"],
       refreshonly => true,
