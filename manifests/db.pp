@@ -60,6 +60,7 @@ define galera::db (
     privileges => $grant,
     provider   => 'mysql',
     require    => Database_user["${user}@${host}"],
+    table      => '*.*',
   }
 
   $refresh = ! $enforce_sql
