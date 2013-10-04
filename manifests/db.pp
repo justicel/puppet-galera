@@ -42,7 +42,7 @@ define galera::db (
   $enforce_sql = false
 ) {
 
-  database { $name:
+  mysql_database { $name:
     ensure   => present,
     charset  => $charset,
     provider => 'mysql',
@@ -56,7 +56,7 @@ define galera::db (
     require       => Database[$name],
   }
 
-  database_grant { "${user}@${host}/${name}":
+  mysql_grant { "${user}@${host}/${name}":
     privileges => $grant,
     provider   => 'mysql',
     require    => Database_user["${user}@${host}"],
