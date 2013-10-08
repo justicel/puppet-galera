@@ -30,7 +30,7 @@ class galera::galeraroot (
       logoutput => true,
       unless    => "mysqladmin -u root -p'${root_password}' status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
-      require   => Service['mysql'],
+      require   => Service['mysql-galera'],
       tries     => 2,
       try_sleep => 5,
    }
@@ -53,8 +53,8 @@ class galera::galeraroot (
     exec { 'set-mysql-password' :
       unless      => "/usr/bin/mysql -u${mysql_user} -p'${mysql_password}'",
       command     => "/usr/bin/mysql -uroot -p'${root_password}' -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
-      require     => Service["mysql"],
-      subscribe   => Service["mysql"],
+      require     => Service['mysql-galera'],
+      subscribe   => Service['mysql-galera'],
       refreshonly => true,
       tries 	  => 2,
       try_sleep   => 5,
