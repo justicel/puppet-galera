@@ -46,9 +46,16 @@ include concat::setup
   }
  
   #Define a basic mysql-galera service
+  if $enabled {
+    $service_ensure = 'running'
+   } else {
+    $service_ensure = 'stopped'
+  }
   service { 'mysql-galera':
     name       => 'mysql',
-    ensure     => $enabled,
+    ensure     => $service_ensure,
+    enable     => $enabled,
+    hasstatus  => false,
     require    => [File[$configfile, $galeraconfig, '/var/run/mysqld'], Package[$galerapackage]],
   }
 
