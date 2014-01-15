@@ -43,7 +43,7 @@ class galera::params {
         key         => '1C4CBDCDCD2EFD2A',
         key_server  => 'keys.gnupg.net',
         include_src => true,
-        before      => [ Package[$compatpackage], Package[$galerapackage] ],
+        before      => [ Package[$galera::compatpackage], Package[$galera::galerapackage] ],
       }
 
       #Modified debian-start to disable mysqlcheck
