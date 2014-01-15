@@ -55,7 +55,7 @@ class galera::galeraroot (
       command     => "/usr/bin/mysql -uroot -p'${root_password}' -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
       require     => Service['mysql-galera'],
       subscribe   => Service['mysql-galera'],
-      refreshonly => true,
+      refreshonly => false, 
       tries 	  => 2,
       try_sleep   => 5,
     }
