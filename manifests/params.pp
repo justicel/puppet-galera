@@ -55,7 +55,8 @@ class galera::params {
 
       $configfile    = '/etc/mysql/my.cnf'
       $galeraconfig  = '/etc/mysql/conf.d/wsrep.cnf'
-      $galerapackage = 'percona-xtradb-cluster-server-5.5'
+      $galerapackage = 'percona-xtradb-cluster-server-5.6'
+      $compatpackage = 'percona-xtradb-cluster-common-5.6'
       $galeralib     = '/usr/lib/libgalera_smm.so'
     }
   }
