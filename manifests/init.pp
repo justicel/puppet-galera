@@ -79,6 +79,7 @@ include concat::setup
   file { $configfile :
     ensure  => present,
     content => template('galera/my.cnf.erb'),
+    require => Package[$compatpackage],
   }
 
   #Build  galera config using puppet-concat
@@ -116,11 +117,10 @@ include concat::setup
 
   #Necessary base folders for all configs
   file { ['/etc/mysql','/etc/mysql/conf.d', '/var/run/mysqld']:
-    ensure => directory,
-    mode   => '0755',
-    group  => 'mysql',
-    owner  => 'mysql',
-    before => File[$configfile],
+    ensure  => directory,
+    mode    => '0755',
+    before  => File[$configfile],
+    require => Package[$compatpackage],
   }
 
 } 
