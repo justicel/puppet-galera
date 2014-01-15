@@ -32,7 +32,7 @@ include concat::setup
   }
   package { $galerapackage:
     ensure  => present,
-    require => Package[$compatpackage],
+    require => [ Package[$compatpackage], File[$galeraconfig] ],
     notify  => Exec['mysql_install_db'],
   }
 
