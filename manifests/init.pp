@@ -32,7 +32,7 @@ include concat::setup
   }
   package { $galerapackage:
     ensure  => present,
-    require => [ File[$configfile], Package[$compatpackage] ],
+    require => Package[$compatpackage],
     notify  => Exec['mysql_install_db'],
   }
 
@@ -79,6 +79,7 @@ include concat::setup
   file { $configfile :
     ensure  => present,
     content => template('galera/my.cnf.erb'),
+    require => Package[$galerapackage],
   }
 
   #Build  galera config using puppet-concat
