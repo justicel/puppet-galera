@@ -20,7 +20,7 @@
 # class {'galera::health_check': }
 #
 class galera::health_check(
-  $mysql_host           = '127.0.0.1',
+  $mysql_host           = 'localhost',
   $xinetd_dir 	        = '/etc/xinetd.d',
   $mysqlchk_user        = 'mysqlchk_user',
   $mysqlchk_password    = 'mysqlchk_password',
