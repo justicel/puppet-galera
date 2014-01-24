@@ -49,7 +49,7 @@ define galera::db (
     require  => Class['galera'],
   }
 
-  database_user { "${user}@${host}":
+  mysql_user { "${user}@${host}":
     ensure        => present,
     password_hash => mysql_password($password),
     provider      => 'mysql',
