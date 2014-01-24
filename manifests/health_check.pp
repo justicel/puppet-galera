@@ -21,9 +21,6 @@
 #
 class galera::health_check(
   $mysql_host           = '127.0.0.1',
-  $mysql_port           = '3306',
-  $mysql_bin_dir        = '/usr/bin/mysql',
-  $mysqlchk_script_dir  = '/usr/local/bin',
   $xinetd_dir 	        = '/etc/xinetd.d',
   $mysqlchk_user        = 'mysqlchk_user',
   $mysqlchk_password    = 'mysqlchk_password',
@@ -48,14 +45,6 @@ class galera::health_check(
     require => Package[$galerapackage],
   }
 
-  file { $mysqlchk_script_dir:
-    ensure  => directory,
-    mode    => '0755',
-    require => Package['xinetd'],
-    owner   => 'root',
-    group   => 'root',
-  }
-
   file { $xinetd_dir:
     ensure  => directory,
     mode    => '0755',
@@ -64,18 +53,10 @@ class galera::health_check(
     group   => 'root',
   }
 
-  file { "${mysqlchk_script_dir}/galera_chk":
-    mode    => '0755',
-    require => File[$mysqlchk_script_dir],
-    content => template("galera/galera_chk"),
-    owner   => 'root',
-    group   => 'root',
-  }
-
   file { "${xinetd_dir}/mysqlchk":
     mode    => '0600',
     require => File[$xinetd_dir],
-    content => template("galera/mysqlchk"),
+    content => template("galera/mysqlchk.erb"),
     owner   => 'root',
     group   => 'root',  
   }
@@ -87,10 +68,10 @@ class galera::health_check(
     changes => [
       "ins service-name after service-name[last()]",
       "set service-name[last()] mysqlchk",
-      "set service-name[. = 'mysqlchk']/port 9220",
+      "set service-name[. = 'mysqlchk']/port 9200",
       "set service-name[. = 'mysqlchk']/protocol tcp",
     ],  
-    onlyif => "match service-name[port = '9220'] size == 0",
+    onlyif => "match service-name[port = '9200'] size == 0",
   }
 
   # Create a user for script to use for checking MySQL health status.
