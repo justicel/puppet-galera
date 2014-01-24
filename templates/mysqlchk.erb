@@ -11,7 +11,8 @@ service mysqlchk
         port            = 9200
         wait            = no
         user            = nobody
-        server          = /usr/bin/clustercheck <%= @mysqlchk_user %> <%= @mysqlchk_password %>
+        server          = /usr/bin/clustercheck
+	server_args     = <%= @mysqlchk_user %> <%= @mysqlchk_password %>
         log_on_failure  += USERID
         only_from       = 0.0.0.0/0
         # recommended to put the IPs that need
