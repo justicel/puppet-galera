@@ -71,7 +71,7 @@ class galera::health_check(
       "set service-name[. = 'mysqlchk']/port 9200",
       "set service-name[. = 'mysqlchk']/protocol tcp",
     ],  
-    onlyif => "match service-name[port = '9200'] size == 0",
+    onlyif => "match service-name[. = 'mysqlchk'] size == 0",
   }
 
   # Create a user for script to use for checking MySQL health status.
