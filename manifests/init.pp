@@ -115,12 +115,22 @@ include concat::setup
     content	=> "gcomm://\n",
   }
 
+  case $::osfamily {
+    Debian: {
+      $mysqlowner = undef
+      $mysqlgroup = undef
+    }
+    Redhat: {
+      $mysqlowner = 'mysql'
+      $mysqlgroup = 'mysql'
+    }
+  }
   #Necessary base folders for all configs
   file { ['/etc/mysql','/etc/mysql/conf.d', '/var/run/mysqld']:
     ensure  => directory,
     mode    => '0755',
-    owner   => 'mysql',
-    group   => 'mysql',
+    owner   => $mysqlowner,
+    group   => $mysqlgroup,
     before  => File[$configfile],
     require => Package[$compatpackage],
   }

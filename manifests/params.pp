@@ -12,7 +12,7 @@ class galera::params {
   $enabled           = true
 
   #Set the repository information for either rpm or deb
-  case $osfamily {
+  case $::osfamily {
     Redhat: {
       package { 'percona-release':
         ensure   => present,
