@@ -60,7 +60,7 @@ define galera::db (
     privileges => $grant,
     provider   => 'mysql',
     require    => Mysql_user["${user}@${host}"],
-    table      => '*.*',
+    table      => $name,
     user       => "${user}@${host}",
   }
 

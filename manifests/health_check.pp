@@ -20,29 +20,30 @@
 # class {'galera::health_check': }
 #
 class galera::health_check(
-  $mysql_host           = 'localhost',
-  $xinetd_dir 	        = '/etc/xinetd.d',
-  $mysqlchk_user        = 'mysqlchk_user',
-  $mysqlchk_password    = 'mysqlchk_password',
-  $enabled              = true,
-) inherits galera::params {
+  $mysql_host        = 'localhost',
+  $xinetd_dir        = '/etc/xinetd.d',
+  $mysqlchk_user     = 'mysqlchk_user',
+  $mysqlchk_password = 'mysqlchk_password',
+  $enabled           = true,
+) inherits ::galera::params {
 
   if $enabled {
     $service_ensure = 'running'
-   } else {
+  }
+  else {
     $service_ensure = 'stopped'
   }
 
   service { 'xinetd' :
-    ensure      => $service_ensure,
-    enable      => $enabled,
-    require     => [Package['xinetd'],File["${xinetd_dir}/mysqlchk"]],
-    subscribe   => File["${xinetd_dir}/mysqlchk"],
+    ensure    => $service_ensure,
+    enable    => $enabled,
+    require   => [Package['xinetd'],File["${xinetd_dir}/mysqlchk"]],
+    subscribe => File["${xinetd_dir}/mysqlchk"],
   }
 
   package { 'xinetd':
     ensure  => present,
-    require => Package[$galerapackage],
+    require => Package[$::galera::params::galerapackage],
   }
 
   file { $xinetd_dir:
@@ -56,22 +57,22 @@ class galera::health_check(
   file { "${xinetd_dir}/mysqlchk":
     mode    => '0600',
     require => File[$xinetd_dir],
-    content => template("galera/mysqlchk.erb"),
+    content => template('galera/mysqlchk.erb'),
     owner   => 'root',
-    group   => 'root',  
+    group   => 'root',
   }
 
   # Manage mysqlchk service in /etc/services
-  augeas { "mysqlchk":
+  augeas { 'mysqlchk':
     require => File["${xinetd_dir}/mysqlchk"],
-    context =>  "/files/etc/services",
+    context => '/files/etc/services',
     changes => [
-      "ins service-name after service-name[last()]",
-      "set service-name[last()] mysqlchk",
+      'ins service-name after service-name[last()]',
+      'set service-name[last()] mysqlchk',
       "set service-name[. = 'mysqlchk']/port 9200",
       "set service-name[. = 'mysqlchk']/protocol tcp",
-    ],  
-    onlyif => "match service-name[. = 'mysqlchk'] size == 0",
+    ],
+    onlyif  => "match service-name[. = 'mysqlchk'] size == 0",
   }
 
   # Create a user for script to use for checking MySQL health status.

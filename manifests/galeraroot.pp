@@ -11,7 +11,7 @@
 #[mysql_password] The mysql password for the wsrep SST user.
 
 class galera::galeraroot (
-  $etc_root_password = $galera::etc_root_password, 
+  $etc_root_password = $galera::etc_root_password,
   $mysql_user        = $galera::mysql_user,
   $mysql_password    = $galera::mysql_password,
   $old_root_password = $galera::old_root_password,
@@ -33,7 +33,7 @@ class galera::galeraroot (
       require   => Service['mysql-galera'],
       tries     => 2,
       try_sleep => 5,
-   }
+    }
 
     file { '/root/.my.cnf':
       content => template('galera/my.cnf.pass.erb'),
@@ -55,8 +55,8 @@ class galera::galeraroot (
       command     => "/usr/bin/mysql -uroot -p'${root_password}' -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${mysql_user}'@'%' identified by '${mysql_password}';flush privileges;\"",
       require     => Service['mysql-galera'],
       subscribe   => Service['mysql-galera'],
-      refreshonly => false, 
-      tries 	  => 2,
+      refreshonly => false,
+      tries       => 2,
       try_sleep   => 5,
     }
 
