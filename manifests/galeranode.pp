@@ -7,15 +7,16 @@
 # [*galeraconfig*] You probably shouldn't touch this.
 
 define galera::galeranode (
-  $cluster_name   = $::galera::params::cluster_name,
+  $cluster_name   = $::galera::cluster_name,
   $node_ipaddress = $::ipaddress,
+  $galeraconfig   = $::galera::galeraconfig
 ) {
   include ::galera
 
   #Very basic node definition here
   concat::fragment { "${cluster_name}_galera_node_${name}":
     order   => "11-${cluster_name}-${node_ipaddress}",
-    target  => $::galera::galeraconfig,
+    target  => $galeraconfig,
     content => "gcomm://${node_ipaddress}:4567,",
   }
 }
