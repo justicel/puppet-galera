@@ -10,6 +10,7 @@ define galera::galeranode (
   $cluster_name   = $::galera::params::cluster_name,
   $node_ipaddress = $::ipaddress,
 ) {
+  include ::galera
 
   #Very basic node definition here
   concat::fragment { "${cluster_name}_galera_node_${name}":
