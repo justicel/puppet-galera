@@ -37,7 +37,7 @@ class galera::health_check(
   }
 
   #Define the cluster check in xinetd
-  xinetd::service { 'mysqlchk':
+  xinetd::service { $clustercheck_xinetd:
     disable                 => $service_ensure,
     port                    => $check_port,
     server                  => $clustercheck_script,
@@ -61,7 +61,7 @@ class galera::health_check(
       "set service-name[. = 'mysqlchk']/protocol tcp",
     ],
     onlyif  => "match service-name[. = 'mysqlchk'] size == 0",
-    require => Xinetd::Service['galera-clustercheck'],
+    require => Xinetd::Service[$clustercheck_xinetd],
   }
 
   # Create a user for script to use for checking MySQL health status.
