@@ -64,7 +64,7 @@ class galera::health_check(
   }
 
   # Create a user for script to use for checking MySQL health status.
-  mysql_user { $mysqlchk_user:
+  mysql_user { "${mysqlchk_user}@${mysql_host}":
     ensure        => present,
     password_hash => mysql_password($mysqlchk_password),
   }
