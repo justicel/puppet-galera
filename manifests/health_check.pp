@@ -56,7 +56,7 @@ class galera::health_check(
     changes => [
       'ins service-name after service-name[last()]',
       'set service-name[last()] mysqlchk',
-      "set service-name[. = 'mysqlchk']/port 9200",
+      "set service-name[. = 'mysqlchk']/port ${check_port}",
       "set service-name[. = 'mysqlchk']/protocol tcp",
     ],
     onlyif  => "match service-name[. = 'mysqlchk'] size == 0",
