@@ -25,6 +25,7 @@ class galera::health_check(
   $mysqlchk_user       = 'clustercheckuser',
   $mysqlchk_password   = 'clustercheckpassword',
   $clustercheck_script = '/usr/bin/clustercheck',
+  $clustercheck_xinetd = 'mysqlchk',
   $check_port          = '9200',
 ) {
   include ::galera::params
@@ -36,7 +37,7 @@ class galera::health_check(
   }
 
   #Define the cluster check in xinetd
-  xinetd::service { 'galera-clustercheck':
+  xinetd::service { 'mysqlchk':
     disable                 => $service_ensure,
     port                    => $check_port,
     server                  => $clustercheck_script,
