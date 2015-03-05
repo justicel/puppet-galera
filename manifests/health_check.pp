@@ -42,6 +42,7 @@ class galera::health_check(
     port                    => $check_port,
     server                  => $clustercheck_script,
     server_args             => "${mysqlchk_user} ${mysqlchk_password}",
+    user                    => 'nobody',
     flags                   => 'REUSE',
     per_source              => 'UNLIMITED',
     service_type            => 'UNLISTED',
