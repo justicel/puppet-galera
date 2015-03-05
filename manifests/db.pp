@@ -9,6 +9,7 @@
 #
 # Parameters:
 #   [*title*]       - galera database name.
+#   [*table*]       - Table space to grant access to
 #   [*user*]        - username to create and grant access.
 #   [*password*]    - user's password.
 #   [*charset*]     - database charset.
@@ -29,6 +30,7 @@
 #    user     => 'my_user',
 #    password => 'password',
 #    host     => $::hostname,
+#    table    => '*',
 #    grant    => ['all']
 #  }
 #
@@ -38,6 +40,7 @@ define galera::db (
   $charset     = 'utf8',
   $host        = 'localhost',
   $grant       = 'all',
+  $table       = '*',
   $sql         = '',
   $enforce_sql = false
 ) {
@@ -56,12 +59,12 @@ define galera::db (
     require       => Mysql_database[$name],
   }
 
-  mysql_grant { "${user}@${host}/${name}":
+  mysql_grant { "${user}@${host}/${name}.${table}":
     privileges => $grant,
     provider   => 'mysql',
-    require    => Mysql_user["${user}@${host}"],
-    table      => $name,
+    table      => $name.$$table,
     user       => "${user}@${host}",
+    require    => Mysql_user["${user}@${host}"],
   }
 
   $refresh = ! $enforce_sql
