@@ -1,0 +1,75 @@
+{
+  "name": "jlondon-galera",
+  "version": "1.0.0",
+  "author": "Justice London",
+  "summary": "Puppet module to install Percona Cluster (galera)",
+  "license": "Apache 2.0",
+  "source": "https://github.com/justicel/puppet-galera.git",
+  "project_page": "https://github.com/justicel/puppet-galera",
+  "issues_url": "https://github.com/justicel/puppet-galera/issues",
+  "tags": [
+    "galera",
+    "mysql",
+    "percona",
+    "cluster",
+    "centos",
+    "debian",
+    "ubuntu"
+  ],
+  "dependencies": [
+    {
+      "name": "puppetlabs-stdlib",
+      "version_range": ">= 1.0.0"
+    },
+    {
+      "name": "puppetlabs-mysql",
+      "version_range": ">= 3.0.0"
+    },
+    {
+      "name": "puppetlabs-xinetd",
+      "version_range": ">= 1.4.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Scientific",
+      "operatingsystemrelease": [
+        "5",
+        "6"
+      ]
+    },
+    {
+      "operatingsystem": "Debian",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "12.04",
+        "14.04"
+      ]
+    }
+  ]
+}

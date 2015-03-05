@@ -34,6 +34,8 @@ class galera::params {
       $galerapackage = 'Percona-XtraDB-Cluster-server-56'
       $compatpackage = 'Percona-Server-shared-compat'
       $galeralib     = '/usr/lib64/libgalera_smm.so'
+      $mysqlowner    = 'mysql'
+      $mysqlgroup    = 'mysql'
     }
     Debian: {
       #This requires puppet-apt. If you don't have it a) You need it b) It's extremely useful
@@ -59,6 +61,8 @@ class galera::params {
       $galerapackage = 'percona-xtradb-cluster-server-5.6'
       $compatpackage = 'percona-xtradb-cluster-common-5.6'
       $galeralib     = '/usr/lib/libgalera_smm.so'
+      $mysqlowner    = undef
+      $mysqlgroup    = undef
     }
     default: {
       fail("The operating system family ${::osfamily} is not supported by the puppet-gpg module on ${::fqdn}")

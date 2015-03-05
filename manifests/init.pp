@@ -8,30 +8,32 @@
 #Root password and similar should be changed from defaults although they are more complex
 #than other 'default' passwords at least.
 class galera (
-  $cluster_name      = $galera::params::cluster_name,
-  $mysql_user        = $galera::params::mysql_user,
-  $mysql_password    = $galera::params::mysql_password,
-  $root_password     = $galera::params::root_password,
-  $enabled           = $galera::params::enabled,
-  $galeraconfig      = $galera::params::galeraconfig,
-  $configfile        = $galera::params::configfile,
-  $old_root_password = $galera::params::old_root_password,
-  $etc_root_password = $galera::params::etc_root_password,
-)
-inherits ::galera::params
-{
+  $cluster_name      = $::galera::params::cluster_name,
+  $mysql_user        = $::galera::params::mysql_user,
+  $mysql_password    = $::galera::params::mysql_password,
+  $root_password     = $::galera::params::root_password,
+  $enabled           = $::galera::params::enabled,
+  $galeraconfig      = $::galera::params::galeraconfig,
+  $configfile        = $::galera::params::configfile,
+  $old_root_password = $::galera::params::old_root_password,
+  $etc_root_password = $::galera::params::etc_root_password,
+) inherits ::galera::params {
   #Include root password settings as needed
   include ::galera::galeraroot
 
   #Check if the main server package (and dependent packages) are installed
-  package { [ $::galera::params::compatpackage, 'socat' ]:
+  ensure_packages([$::galera::params::compatpackage, 'socat' ], {
     ensure => present,
-  }
-  package { $::galera::params::galerapackage:
+  })
+  ensure_packages([$::galera::params::galerapackage], {
     ensure  => present,
-    require => [ Package[$::galera::params::compatpackage, 'socat' ], File[$galeraconfig] ],
-    notify  => Exec['mysql_install_db'],
-  }
+    require => [
+      Package[$::galera::params::compatpackage],
+      Package['socat'],
+      File[$galeraconfig],
+    ],
+    notify => Exec['mysql_install_db'],
+  })
 
   #Just to be safe, we run install command for mysql on package install
   exec { 'mysql_install_db':
@@ -39,41 +41,49 @@ inherits ::galera::params
     creates     => '/var/lib/mysql/mysql/user.frm',
     refreshonly => true,
     require     => File[$configfile, $galeraconfig],
-    before      => [ Service['mysql-galera'], Exec['galera-reload'], Exec['galera-restart'] ],
+    before      => [
+      Service['mysql-galera'],
+      Exec['galera-reload'],
+      Exec['galera-restart'],
+    ],
   }
 
   #Define a basic mysql-galera service
-  if $enabled {
-    $service_ensure = 'running'
-  }
-  else {
-    $service_ensure = 'stopped'
+  $service_ensure = $enabled ? {
+    false   => 'stopped',
+    default => 'running',
   }
   service { 'mysql-galera':
     ensure    => $service_ensure,
     name      => 'mysql',
     enable    => $enabled,
     hasstatus => false,
-    require   => [File[$configfile, $galeraconfig, '/var/run/mysqld'], Package[$::galera::params::galerapackage]],
+    require   => [
+      File[$configfile, $galeraconfig, '/var/run/mysqld'],
+      Package[$::galera::params::galerapackage],
+    ],
   }
 
   #Custom exec to only reload mysql on config changes
   exec { 'galera-reload':
     command     => 'service mysql reload',
+    path        => ['/usr/bin:/usr/sbin:/sbin:/bin'],
     refreshonly => true,
-    require     => [Package[$::galera::params::galerapackage], Service['mysql']],
-    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
+    require     => [
+      Package[$::galera::params::galerapackage],
+      Service['mysql'],
+    ],
   }
 
   exec { 'galera-restart':
     command     => 'service mysql restart',
+    path        => ['/usr/bin:/usr/sbin:/sbin:/bin'],
     logoutput   => on_failure,
     refreshonly => true,
-    path        => '/sbin/:/usr/sbin/:/usr/bin/:/bin/',
   }
 
   #Default mysql config file
-  file { $configfile :
+  file { $configfile:
     ensure  => present,
     content => template('galera/my.cnf.erb'),
     require => Package[$::galera::params::compatpackage],
@@ -104,6 +114,7 @@ inherits ::galera::params
   }
   #Realize cluster members as wsrep_url entries
   Galera::Galeranode <<| cluster_name == $cluster_name |>>
+
   #Cap the wsrep_url entry with a blank node
   #This allows us to start a new cluster if none of the members can be located
   concat::fragment { "${cluster_name}_wsrep_final":
@@ -112,27 +123,13 @@ inherits ::galera::params
     content => "gcomm://\n",
   }
 
-  case $::osfamily {
-    Debian: {
-      $mysqlowner = undef
-      $mysqlgroup = undef
-    }
-    Redhat: {
-      $mysqlowner = 'mysql'
-      $mysqlgroup = 'mysql'
-    }
-    default: {
-      fail("The operating system family ${::osfamily} is not supported by the puppet-gpg module on ${::fqdn}")
-    }
-  }
   #Necessary base folders for all configs
   file { ['/etc/mysql','/etc/mysql/conf.d', '/var/run/mysqld']:
     ensure  => directory,
     mode    => '0755',
-    owner   => $mysqlowner,
-    group   => $mysqlgroup,
+    owner   => $::galera::params::mysqlowner,
+    group   => $::galera::params::mysqlgroup,
     before  => File[$configfile],
     require => Package[$::galera::params::compatpackage],
   }
-
 }

@@ -11,60 +11,47 @@
 #  mode  tcp
 #  option  tcpka
 #  option  httpchk
-#  server  control01 192.168.220.41:3306 check port 9220 inter 2000 rise 2 fall 5
-#  server  control02 192.168.220.42:3306 check port 9220 inter 2000 rise 2 fall 5
-#  server  control03 192.168.220.43:3306 check port 9220 inter 2000 rise 2 fall 5
+#  server  control01 192.168.220.41:3306 check port 9200 inter 2000 rise 2 fall 5
+#  server  control02 192.168.220.42:3306 check port 9200 inter 2000 rise 2 fall 5
+#  server  control03 192.168.220.43:3306 check port 9200 inter 2000 rise 2 fall 5
 #
 # Example Usage:
 #
 # class {'galera::health_check': }
 #
 class galera::health_check(
-  $mysql_host        = 'localhost',
-  $xinetd_dir        = '/etc/xinetd.d',
-  $mysqlchk_user     = 'mysqlchk_user',
-  $mysqlchk_password = 'mysqlchk_password',
-  $enabled           = true,
-) inherits ::galera::params {
+  $enabled             = true,
+  $mysql_host          = 'localhost',
+  $mysqlchk_user       = 'clustercheckuser',
+  $mysqlchk_password   = 'clustercheckpassword',
+  $clustercheck_script = '/usr/bin/clustercheck',
+  $check_port          = '9200',
+) {
+  include ::galera::params
 
-  if $enabled {
-    $service_ensure = 'running'
-  }
-  else {
-    $service_ensure = 'stopped'
-  }
-
-  service { 'xinetd' :
-    ensure    => $service_ensure,
-    enable    => $enabled,
-    require   => [Package['xinetd'],File["${xinetd_dir}/mysqlchk"]],
-    subscribe => File["${xinetd_dir}/mysqlchk"],
+  #Xinetd service define and start
+  $service_ensure = $enabled ? {
+    false   => 'no',
+    default => 'yes',
   }
 
-  package { 'xinetd':
-    ensure  => present,
-    require => Package[$::galera::params::galerapackage],
-  }
-
-  file { $xinetd_dir:
-    ensure  => directory,
-    mode    => '0755',
-    require => Package['xinetd'],
-    owner   => 'root',
-    group   => 'root',
-  }
-
-  file { "${xinetd_dir}/mysqlchk":
-    mode    => '0600',
-    require => File[$xinetd_dir],
-    content => template('galera/mysqlchk.erb'),
-    owner   => 'root',
-    group   => 'root',
+  #Define the cluster check in xinetd
+  xinetd::service { 'galera-clustercheck':
+    disable                 => $service_ensure,
+    port                    => $check_port,
+    server                  => $clustercheck_script,
+    server_args             => "${mysqlchk_user} ${mysqlchk_password}",
+    flags                   => 'REUSE',
+    per_source              => 'UNLIMITED',
+    service_type            => 'UNLISTED',
+    log_on_success          => '',
+    log_on_success_operator => '=',
+    log_on_failure          => 'HOST',
+    log_on_failure_operator => '=',
   }
 
   # Manage mysqlchk service in /etc/services
   augeas { 'mysqlchk':
-    require => File["${xinetd_dir}/mysqlchk"],
     context => '/files/etc/services',
     changes => [
       'ins service-name after service-name[last()]',
@@ -73,13 +60,19 @@ class galera::health_check(
       "set service-name[. = 'mysqlchk']/protocol tcp",
     ],
     onlyif  => "match service-name[. = 'mysqlchk'] size == 0",
+    require => Xinetd::Service['galera-clustercheck'],
   }
 
   # Create a user for script to use for checking MySQL health status.
-  galera::db { 'mysql':
-    user     => $mysqlchk_user,
-    password => $mysqlchk_password,
-    host     => $mysql_host,
-    grant    => ['all']
+  mysql_user { $mysqlchk_user:
+    ensure        => present,
+    password_hash => mysql_password($mysqlchk_password),
+  }
+  mysql_grant { "${mysqlchk_user}@${mysql_host}/*.*":
+    ensure     => present,
+    options    => ['GRANT'],
+    privileges => ['PROCESS'],
+    table      => '*.*',
+    user       => "${mysqlchk_user}@${mysql_host}",
   }
 }
