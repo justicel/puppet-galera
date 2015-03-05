@@ -32,8 +32,8 @@ class galera::health_check(
 
   #Xinetd service define and start
   $service_ensure = $enabled ? {
-    false   => 'no',
-    default => 'yes',
+    false   => 'yes',
+    default => 'no',
   }
 
   #Define the cluster check in xinetd
