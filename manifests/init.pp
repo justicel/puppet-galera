@@ -14,6 +14,7 @@ class galera (
   $root_password     = $::galera::params::root_password,
   $enabled           = $::galera::params::enabled,
   $galeraconfig      = $::galera::params::galeraconfig,
+  $mysqlconfig       = 'galera/my.cnf.erb',
   $configfile        = $::galera::params::configfile,
   $old_root_password = $::galera::params::old_root_password,
   $etc_root_password = $::galera::params::etc_root_password,
@@ -85,7 +86,7 @@ class galera (
   #Default mysql config file
   file { $configfile:
     ensure  => present,
-    content => template('galera/my.cnf.erb'),
+    content => template($mysqlconfig),
     require => Package[$::galera::params::compatpackage],
   }
 
