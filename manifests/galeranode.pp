@@ -12,8 +12,7 @@ define galera::galeranode (
   $order        = '11',
   $ipaddress    = $::ipaddress,
   $galeraconfig = $galera::params::galeraconfig,
-)
-{
+) {
 
   #Very basic node definition here
   concat::fragment { "${cluster_name}_galera_node_${name}":
