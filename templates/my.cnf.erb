@@ -51,7 +51,7 @@ bind-address		= 0.0.0.0
 # * Fine Tuning
 #
 key_buffer		= 32M
-max_allowed_packet	= 16M
+max_allowed_packet	= 64M
 thread_stack		= 192K
 thread_cache_size       = 8
 # This replaces the startup script and checks MyISAM tables if needed
@@ -110,7 +110,7 @@ max_binlog_size         = 100M
 # ssl-key=/etc/mysql/server-key.pem
 
 #Some optimized defaults for Galera
-innodb-buffer-pool-size=512M
+innodb-buffer-pool-size=2048M
 innodb-flush-log-at-trx_commit=0 #This is safe to use in Galera
 innodb-file-per-table=1
 innodb-doublewrite=0
@@ -119,7 +119,8 @@ innodb-log-files-in-group=3
 innodb-thread-concurrency=0
 innodb-flush-method = O_DIRECT
 innodb_open_files=2500
-innodb_lock_wait_timeout=120
+innodb_lock_wait_timeout=500
+wait_timeout=86400
 
 table-open_cache=2048
 
