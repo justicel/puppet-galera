@@ -42,7 +42,7 @@ class galera::params {
       apt::source { 'percona_xtradb':
         location    => 'http://repo.percona.com/apt',
         repos       => 'main',
-        key         => '8507EFA5',
+        key         => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
         key_server  => 'keys.gnupg.net',
         include_src => true,
         before      => Class['galera'],
