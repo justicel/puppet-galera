@@ -39,7 +39,7 @@ class galera::params {
       #This requires puppet-apt. If you don't have it a) You need it b) It's extremely useful
       apt::source { 'percona_xtradb':
         location    => 'http://repo.percona.com/apt',
-        repos       => $::lsbdistcodename,
+        release     => $::lsbdistcodename,
         key         => '1C4CBDCDCD2EFD2A',
         key_server  => 'keys.gnupg.net',
         include_src => true,
