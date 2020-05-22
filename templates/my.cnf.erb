@@ -111,7 +111,7 @@ max_binlog_size         = 100M
 # ssl-key=/etc/mysql/server-key.pem
 
 #Some optimized defaults for Galera
-innodb-buffer-pool-size=<%= memorysize_mb.to_i / 2 -%>M
+innodb-buffer-pool-size=<% if @custom_innodb_buffer_pool %><%= @custom_innodb_buffer_pool %><% else %><%= memorysize_mb.to_i / 2 -%><% end %>M
 innodb-flush-log-at-trx_commit=0 #This is safe to use in Galera
 innodb-file-per-table=1
 innodb-doublewrite=0

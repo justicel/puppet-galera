@@ -8,17 +8,18 @@
 #Root password and similar should be changed from defaults although they are more complex
 #than other 'default' passwords at least.
 class galera (
-  $cluster_name        = $::galera::params::cluster_name,
-  $mysql_user          = $::galera::params::mysql_user,
-  $mysql_password      = $::galera::params::mysql_password,
-  $root_password       = $::galera::params::root_password,
-  $enabled             = $::galera::params::enabled,
-  $galeraconfig        = $::galera::params::galeraconfig,
-  $mysqlconfig         = 'galera/my.cnf.erb',
-  $configfile          = $::galera::params::configfile,
-  $old_root_password   = $::galera::params::old_root_password,
-  $etc_root_password   = $::galera::params::etc_root_password,
-  $wsrep_slave_threads = '4',
+  $cluster_name              = $::galera::params::cluster_name,
+  $mysql_user                = $::galera::params::mysql_user,
+  $mysql_password            = $::galera::params::mysql_password,
+  $root_password             = $::galera::params::root_password,
+  $enabled                   = $::galera::params::enabled,
+  $galeraconfig              = $::galera::params::galeraconfig,
+  $mysqlconfig               = 'galera/my.cnf.erb',
+  $configfile                = $::galera::params::configfile,
+  $old_root_password         = $::galera::params::old_root_password,
+  $etc_root_password         = $::galera::params::etc_root_password,
+  $wsrep_slave_threads       = '4',
+  $custom_innodb_buffer_pool = undef,
 ) inherits ::galera::params {
   #Include root password settings as needed
   include ::galera::galeraroot
