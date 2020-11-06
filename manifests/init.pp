@@ -8,6 +8,7 @@
 #Root password and similar should be changed from defaults although they are more complex
 #than other 'default' passwords at least.
 class galera (
+  $version                   = '5.6',
   $cluster_name              = $::galera::params::cluster_name,
   $mysql_user                = $::galera::params::mysql_user,
   $mysql_password            = $::galera::params::mysql_password,
@@ -25,13 +26,13 @@ class galera (
   include ::galera::galeraroot
 
   #Check if the main server package (and dependent packages) are installed
-  ensure_packages([$::galera::params::compatpackage, 'socat' ], {
+  ensure_packages(["${::galera::params::compatpackage}${version}", 'socat' ], {
     ensure => present,
   })
-  ensure_packages([$::galera::params::galerapackage], {
+  ensure_packages(["${::galera::params::galerapackage}${version}"], {
     ensure  => present,
     require => [
-      Package[$::galera::params::compatpackage],
+      Package["${::galera::params::compatpackage}${version}"],
       Package['socat'],
       Concat_file[$galeraconfig],
     ],
@@ -64,7 +65,7 @@ class galera (
     require   => [
       File[$configfile, '/var/run/mysqld'],
       Concat_file[$galeraconfig],
-      Package[$::galera::params::galerapackage],
+      Package["${::galera::params::galerapackage}${version}"],
     ],
   }
 
@@ -74,7 +75,7 @@ class galera (
     path        => ['/usr/bin:/usr/sbin:/sbin:/bin'],
     refreshonly => true,
     require     => [
-      Package[$::galera::params::galerapackage],
+      Package["${::galera::params::galerapackage}${version}"],
       Service['mysql'],
     ],
   }
