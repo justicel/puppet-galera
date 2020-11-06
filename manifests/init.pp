@@ -43,7 +43,7 @@ class galera (
     path        => ['/usr/bin/:/usr/sbin/:/sbin/:/bin/'],
     creates     => '/var/lib/mysql/mysql/user.frm',
     refreshonly => true,
-    require     => File[$configfile, $galeraconfig],
+    require     => [File[$configfile], Concat_file[$galeraconfig]],
     before      => [
       Service['mysql-galera'],
       Exec['galera-reload'],
