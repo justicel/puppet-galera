@@ -13,7 +13,7 @@ class galera::params {
 
   #Set the repository information for either rpm or deb
   case $::osfamily {
-    Redhat: {
+    'Redhat': {
       package { 'percona-release':
         ensure   => present,
         source   => 'http://www.percona.com/redir/downloads/percona-release/percona-release-0.0-1.x86_64.rpm',
@@ -37,7 +37,7 @@ class galera::params {
       $mysqlowner    = 'mysql'
       $mysqlgroup    = 'mysql'
     }
-    Debian: {
+    'Debian': {
       #This requires puppet-apt. If you don't have it a) You need it b) It's extremely useful
       apt::source { 'percona_xtradb':
         location    => 'http://repo.percona.com/apt',
