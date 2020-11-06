@@ -91,7 +91,7 @@ class galera (
   file { $configfile:
     ensure  => present,
     content => template($mysqlconfig),
-    require => Package[$::galera::params::compatpackage],
+    require => Package["${::galera::params::compatpackage}${version}"],
   }
 
   #Build  galera config using puppet-concat
