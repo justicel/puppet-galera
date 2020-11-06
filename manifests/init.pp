@@ -62,7 +62,8 @@ class galera (
     enable    => $enabled,
     hasstatus => false,
     require   => [
-      File[$configfile, $galeraconfig, '/var/run/mysqld'],
+      File[$configfile, '/var/run/mysqld'],
+      Concat_file[$galeraconfig],
       Package[$::galera::params::galerapackage],
     ],
   }
