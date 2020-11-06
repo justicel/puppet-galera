@@ -40,12 +40,16 @@ class galera::params {
     'Debian': {
       #This requires puppet-apt. If you don't have it a) You need it b) It's extremely useful
       apt::source { 'percona_xtradb':
-        location    => 'http://repo.percona.com/apt',
-        repos       => 'main',
-        key         => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
-        key_server  => 'keys.gnupg.net',
-        include_src => true,
-        before      => Class['galera'],
+        location => 'http://repo.percona.com/apt',
+        repos    => 'main',
+        key      => {
+          'id'     => '4D1BB29D63D98E422B2113B19334A25F8507EFA5',
+          'server' => 'keys.gnupg.net',
+        },
+        include  => {
+          'src' => true,
+        },
+        before   => Class['galera'],
       }
 
       #Modified debian-start to disable mysqlcheck
