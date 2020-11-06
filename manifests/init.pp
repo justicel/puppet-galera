@@ -135,6 +135,6 @@ class galera (
     owner   => $::galera::params::mysqlowner,
     group   => $::galera::params::mysqlgroup,
     before  => File[$configfile],
-    require => Package[$::galera::params::compatpackage],
+    require => Package["${::galera::params::compatpackage}${version}"],
   }
 }
