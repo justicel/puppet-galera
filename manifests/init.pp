@@ -33,7 +33,7 @@ class galera (
     require => [
       Package[$::galera::params::compatpackage],
       Package['socat'],
-      File[$galeraconfig],
+      Concat_file[$galeraconfig],
     ],
     notify => Exec['mysql_install_db'],
   })
