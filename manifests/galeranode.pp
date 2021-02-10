@@ -9,14 +9,14 @@
 define galera::galeranode (
   $cluster_name   = $::galera::cluster_name,
   $node_ipaddress = $::ipaddress,
-  $galeraconfig   = $::galera::clusterconfig,
+  $clusterconfig   = $::galera::clusterconfig,
 ) {
   include ::galera
 
   #Very basic node definition here
   concat::fragment { "${cluster_name}_galera_node_${name}":
     order   => "11-${cluster_name}-${node_ipaddress}",
-    target  => $galeraconfig,
+    target  => $clusterconfig,
     content => "${node_ipaddress},",
   }
 }
