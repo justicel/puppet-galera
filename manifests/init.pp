@@ -15,6 +15,7 @@ class galera (
   $root_password             = $::galera::params::root_password,
   $enabled                   = $::galera::params::enabled,
   $galeraconfig              = $::galera::params::galeraconfig,
+  $clusterconfig             = $::galera::params::clusterconfig,
   $mysqlconfig               = 'galera/my.cnf.erb',
   $configfile                = $::galera::params::configfile,
   $old_root_password         = $::galera::params::old_root_password,
@@ -105,7 +106,7 @@ class galera (
     order   => '01',
     content => "#This file managed by Puppet\n",
   }
-  #The main csync2 config body as defined by template and concat.
+  #The main config body as defined by template and concat.
   concat::fragment { "${cluster_name}_galera_body":
     order   => '02',
     target  => $galeraconfig,
@@ -117,17 +118,31 @@ class galera (
     target  => $galeraconfig,
     content => 'wsrep_urls=',
   }
+
+  concat { $clusterconfig:
+    owner => '0',
+    group => '0',
+    mode  => '0644',
+  }
+  concat::fragment { 'clusterconfig_body':
+    target  => $clusterconfig,
+    order   => '01',
+    content => "#This file managed by Puppet\n",
+  }
+  concat::fragment { "${cluster_name}_cluster_body":
+    order => '02',
+    target => $clusterconfig,
+    content => template('galera/cluster.cnf.erb'),
+  }
   #Realize cluster members as wsrep_url entries
   Galera::Galeranode <<| cluster_name == $cluster_name |>>
 
-  #Cap the wsrep_url entry with a blank node
-  #This allows us to start a new cluster if none of the members can be located
-  concat::fragment { "${cluster_name}_wsrep_final":
-    order   => '12',
-    target  => $galeraconfig,
-    content => "gcomm://\n",
+  content::fragment { "${cluster_name}_cluster_address":
+    order => '10',
+    target => $clusterconfig,
+    content => 'wsrep_cluster_address=gcomm://',
   }
-
+    
   #Necessary base folders for all configs
   file { ['/etc/mysql','/etc/mysql/conf.d', '/var/run/mysqld']:
     ensure  => directory,

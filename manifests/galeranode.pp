@@ -17,6 +17,6 @@ define galera::galeranode (
   concat::fragment { "${cluster_name}_galera_node_${name}":
     order   => "11-${cluster_name}-${node_ipaddress}",
     target  => $galeraconfig,
-    content => "gcomm://${node_ipaddress}:4567,",
+    content => "${node_ipaddress},",
   }
 }
