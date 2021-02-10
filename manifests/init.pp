@@ -112,12 +112,6 @@ class galera (
     target  => $galeraconfig,
     content => template('galera/wsrep.cnf.erb'),
   }
-  #Add wsrep_urls text to config
-  concat::fragment { "${cluster_name}_wsrep_url":
-    order   => '10',
-    target  => $galeraconfig,
-    content => 'wsrep_urls=',
-  }
 
   concat { $clusterconfig:
     owner => '0',
