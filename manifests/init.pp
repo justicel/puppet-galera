@@ -137,7 +137,7 @@ class galera (
   #Realize cluster members as wsrep_url entries
   Galera::Galeranode <<| cluster_name == $cluster_name |>>
 
-  content::fragment { "${cluster_name}_cluster_address":
+  concat::fragment { "${cluster_name}_cluster_address":
     order => '10',
     target => $clusterconfig,
     content => 'wsrep_cluster_address=gcomm://',
