@@ -9,7 +9,7 @@
 define galera::galeranode (
   $cluster_name   = $::galera::cluster_name,
   $node_ipaddress = $::ipaddress,
-  $clusterconfig   = $::galera::clusterconfig,
+  $clusterconfig  = $::galera::clusterconfig,
 ) {
   include ::galera
 

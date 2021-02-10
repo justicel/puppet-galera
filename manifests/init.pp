@@ -134,8 +134,8 @@ class galera (
   Galera::Galeranode <<| cluster_name == $cluster_name |>>
 
   concat::fragment { "${cluster_name}_cluster_address":
-    order => '10',
-    target => $clusterconfig,
+    order   => '10',
+    target  => $clusterconfig,
     content => 'wsrep_cluster_address=gcomm://',
   }
     
