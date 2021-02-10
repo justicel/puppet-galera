@@ -4,7 +4,7 @@
 # [*cluster_name*] The name of the galera group you are going to add this node to.
 # [*node_ipaddress*] The IP address to use to actually connect to the server. This could ALSO be a separate
 #   hostname. By default it's the primary IP on the system/server.
-# [*galeraconfig*] You probably shouldn't touch this.
+# [*clusterconfig*] You probably shouldn't touch this.
 
 define galera::galeranode (
   $cluster_name   = $::galera::cluster_name,

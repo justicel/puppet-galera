@@ -36,6 +36,7 @@ class galera (
       Package["${::galera::params::compatpackage}${version}"],
       Package['socat'],
       Concat_file[$galeraconfig],
+      Concat_file[$clusterconfig],
     ],
     notify => Exec['mysql_install_db'],
   })
@@ -45,7 +46,7 @@ class galera (
     path        => ['/usr/bin/:/usr/sbin/:/sbin/:/bin/'],
     creates     => '/var/lib/mysql/mysql/user.frm',
     refreshonly => true,
-    require     => [File[$configfile], Concat_file[$galeraconfig]],
+    require     => [File[$configfile], Concat_file[$galeraconfig], Concat_file[$clusterconfig]],
     before      => [
       Service['mysql-galera'],
       Exec['galera-reload'],
@@ -66,6 +67,7 @@ class galera (
     require   => [
       File[$configfile, '/var/run/mysqld'],
       Concat_file[$galeraconfig],
+      Concat_file[$clusterconfig],
       Package["${::galera::params::galerapackage}${version}"],
     ],
   }
