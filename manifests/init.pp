@@ -8,7 +8,7 @@
 #Root password and similar should be changed from defaults although they are more complex
 #than other 'default' passwords at least.
 class galera (
-  $version                   = '5.6',
+  $version                   = '5.7',
   $cluster_name              = $::galera::params::cluster_name,
   $mysql_user                = $::galera::params::mysql_user,
   $mysql_password            = $::galera::params::mysql_password,
