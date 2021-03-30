@@ -22,7 +22,7 @@ class galera (
   $etc_root_password         = $::galera::params::etc_root_password,
   $wsrep_slave_threads       = '4',
   $custom_innodb_buffer_pool = undef,
-  $provider_options          = undef,
+  $provider_options          = {},
 ) inherits ::galera::params {
   #Include root password settings as needed
   include ::galera::galeraroot
