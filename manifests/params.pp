@@ -7,7 +7,7 @@ class galera::params {
   $mysql_user        = 'wsrep_sst'
   $mysql_password    = 'G@l3RaL0g'
   $root_password     = 'Ch@ng3Th1s'
-  $datadir           = /var/lib/mysql
+  $datadir           = '/var/lib/mysql'
   $old_root_password = ''
   $etc_root_password = false
   $enabled           = true
