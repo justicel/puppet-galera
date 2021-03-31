@@ -25,7 +25,7 @@ socket    = /var/run/mysqld/mysqld.sock
 
 # This was formally known as [safe_mysqld]. Both versions are currently parsed.
 [mysqld_safe]
-datadir         = /var/lib/mysql
+datadir         = <%= @datadir %>
 socket    = /var/run/mysqld/mysqld.sock
 nice    = 0
 

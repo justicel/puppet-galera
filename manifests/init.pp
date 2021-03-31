@@ -18,6 +18,7 @@ class galera (
   $clusterconfig             = $::galera::params::clusterconfig,
   $mysqlconfig               = 'galera/my.cnf.erb',
   $configfile                = $::galera::params::configfile,
+  $datadir                   = $::galera::params::datadir,
   $old_root_password         = $::galera::params::old_root_password,
   $etc_root_password         = $::galera::params::etc_root_password,
   $wsrep_slave_threads       = '4',
