@@ -94,7 +94,7 @@ class galera (
 
   #Default mysql config file
   file { $configfile:
-    ensure  => present,
+    ensure  => file, 
     content => template($mysqlconfig),
     require => Package["${::galera::params::compatpackage}${version}"],
   }
