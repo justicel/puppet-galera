@@ -68,8 +68,8 @@ class galera::params {
       $galerapackage = 'percona-xtradb-cluster-server-'
       $compatpackage = 'percona-xtradb-cluster-common-'
       $galeralib     = '/usr/lib/libgalera_smm.so'
-      $mysqlowner    = undef
-      $mysqlgroup    = undef
+      $mysqlowner    = 'mysql'
+      $mysqlgroup    = 'mysql'
     }
     default: {
       fail("The operating system family ${::osfamily} is not supported by the puppet-gpg module on ${::fqdn}")
